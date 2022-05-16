@@ -1,0 +1,14 @@
+name: Nationstates
+version: 1.0.0
+api-version: 1.18
+author: "Robins Software"
+main: ca.robinssoftware.nationstates.NationstatesPlugin
+description: A geopolitical factions plugin for Spigot.
+load: STARTUP
+commands:
+   nation:
+      description: Commands to manage a nation.
+      aliases: [n]
+   nationstates:
+      description: Commands to manage the Nationstates plugin.
+      aliases: [ns]
