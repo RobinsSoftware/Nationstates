@@ -15,10 +15,22 @@ public class Language extends JSONFile {
     static {
         JSONObject defaults = new JSONObject();
 
-        defaults.put("PREFIX", "&dNationstates &f> ");
+        defaults.put("DEFAULT_PREFIX", "&dNationstates &f> ");
         
         defaults.put("DEFAULT_FOOTER", "&7>>> &dPage &b%s &dof &b%s &7<<<");
         defaults.put("DEFAULT_DESCRIPTION", "No description set.");
+        defaults.put("DEFAULT_REQUIRE_ADMIN", "&cOnly administrators can specify other nations and players to modify.");
+        defaults.put("DEFAULT_NO_PERMISSION", "&cYou do not have permission to use this command.");
+        defaults.put("DEFAULT_USAGE", "&cInvalid arguments. '/%s'.");
+        defaults.put("DEFAULT_CONSOLE_SENDER", "&cOnly players can use this command.");
+        defaults.put("DEFAULT_PLAYER_OFFLINE", "&cPlayer '%s' is offline.");
+        defaults.put("DEFAULT_COMMAND_NOT_FOUND", "&cCommand '%s' not found.");
+        defaults.put("DEFAULT_NATION_DOES_NOT_EXIST", "&cNation '%s' doesn't exist.");
+        defaults.put("DEFAULT_NOT_IN_NATION", "&cYou are not in a nation.");
+        
+        defaults.put("JOIN_NOTIFY", "&bYou have joined %s.");
+        defaults.put("JOIN_NOT_INVITED", "&cYou have not been invited to %s.");
+        defaults.put("JOIN_ALREADY_IN_NATION", "&cYou are already a member of %s");
         
         defaults.put("HELP_TITLE", "&7>>> &dNationstates Commands &7<<<");
         defaults.put("HELP_ENTRY_HELP", "&dhelp&7:&dh &7> &bView available commands.");
@@ -35,7 +47,9 @@ public class Language extends JSONFile {
         defaults.put("HELP_ENTRY_UNINVITE", "&duninvite&7:&duinv &7> &bUninvite a player from a nation.");
         defaults.put("HELP_ENTRY_PROMOTE", "&dpromote&7:&dp &7> &bPromote a player within a nation.");
         defaults.put("HELP_ENTRY_DEMOTE", "&ddemote&7:&dde &7> &bDemote a player within a nation.");
-
+        
+        defaults.put("LEAVE_LEADER", "&cYou must disband your nation or set a new leader before leaving it.");
+        
         DEFAULTS = defaults;
     }
 
@@ -59,6 +73,6 @@ public class Language extends JSONFile {
     }
 
     public String getWithPrefix(String string, String... replacements) {
-        return get("PREFIX") + get(string, replacements);
+        return get("DEFAULT_PREFIX") + get(string, replacements);
     }
 }

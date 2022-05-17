@@ -30,14 +30,18 @@ public abstract class JSONFile {
 
         isNew = !file.exists();
         
+        if (defaults != null)
+            options = defaults;
+        else
+            options = new JSONObject();
+        
         try {
             if (!file.exists()) {
                 if (!create)
                     return;
-
+                    
                 file.getParentFile().mkdirs();
                 file.createNewFile();
-                options = defaults;
                 save();
                 return;
             }
@@ -50,7 +54,6 @@ public abstract class JSONFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
     }
     
     protected boolean isNew() {
@@ -59,8 +62,7 @@ public abstract class JSONFile {
     
     protected void save() throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8);
-        String output = options == null ? "{}" : options.toString(2);
-        writer.write(output);
+        writer.write(options.toString(2));
         writer.close();
     }
 
