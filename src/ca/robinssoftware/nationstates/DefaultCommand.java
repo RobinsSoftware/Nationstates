@@ -2,6 +2,8 @@ package ca.robinssoftware.nationstates;
 
 import static ca.robinssoftware.nationstates.NationstatesPlugin.PLUGIN;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -9,6 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class DefaultCommand implements CommandExecutor {
 
@@ -17,7 +20,8 @@ public class DefaultCommand implements CommandExecutor {
             PLUGIN.getLanguageData().get("HELP_ENTRY_JOIN"), PLUGIN.getLanguageData().get("HELP_ENTRY_LEAVE"),
             PLUGIN.getLanguageData().get("HELP_ENTRY_CREATE"), PLUGIN.getLanguageData().get("HELP_ENTRY_DISBAND"),
             PLUGIN.getLanguageData().get("HELP_ENTRY_CLAIMS"), PLUGIN.getLanguageData().get("HELP_ENTRY_CLAIM"),
-            PLUGIN.getLanguageData().get("HELP_ENTRY_UNCLAIM"));
+            PLUGIN.getLanguageData().get("HELP_ENTRY_UNCLAIM"), PLUGIN.getLanguageData().get("HELP_ENTRY_PROMOTE"),
+            PLUGIN.getLanguageData().get("HELP_ENTRY_DEMOTE"));
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -41,12 +45,18 @@ public class DefaultCommand implements CommandExecutor {
             return true;
         case "members":
         case "m":
+            members(sender, args);
+            return true;
         case "info":
         case "i":
+            info(sender, args);
+            return true;
         case "claims":
         case "cs":
         case "create":
         case "c":
+            create(sender, args);
+            return true;
         case "unclaim":
         case "uc":
         case "claim":
@@ -169,19 +179,76 @@ public class DefaultCommand implements CommandExecutor {
             sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation leave"));
     }
 
-    void members() {
+    void info(CommandSender sender, String... args) {
+        if (!Permission.INFO.get(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+        
+        if (args.length > 3) {
+            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation info [nation:page] [page]"));
+            return;
+        }
 
+        Nation nation = null;
+        if (args.length == 1)
+            if (sender instanceof Player)
+                nation = new OfflinePlayerWrapper((Player) sender).getNation();
+            else {
+                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER", args));
+                return;
+            }
+        else
+            nation = Nation.get(args[1].toLowerCase());
+
+        if (nation == null) {
+            if (args.length == 1)
+                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+            else
+                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1]));
+            return;
+        }
+
+        int page = 0;
+        
+        if (args.length == 3 || args.length == 2) {
+            try {
+                page = Integer.parseInt(args[args.length - 1]);
+            } catch(NumberFormatException e) {}
+        }
+        
+        new PagedChatMessage(PLUGIN.getLanguageData().get("INFO_TITLE", nation.getDisplayName()),
+                List.of(PLUGIN.getLanguageData().get("INFO_ENTRY_ID", nation.getName()),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_CREATED",
+                                new SimpleDateFormat(PLUGIN.getLanguageData().get("TIME_FORMAT"))
+                                        .format(new Date(nation.getTimeCreated()))),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_MEMBERS", "" + nation.getAllPlayers().size()),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_LEADER", nation.getLeader().getName()),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_POLITICS"),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_SOCIAL"),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_ECONOMIC"),
+                        PLUGIN.getLanguageData().get("INFO_ENTRY_AUTHORITARIANISM"))).sendTo(sender, page);
     }
 
-    void info() {
+    void members(CommandSender sender, String... args) {
+        if (!Permission.MEMBERS.get(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+    }
+    
+    void create(CommandSender sender, String... args) {
+        if (!Permission.CREATE.get(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+    }
+
+    void claim() {
 
     }
 
     void unclaim() {
-
-    }
-
-    void claim() {
 
     }
 

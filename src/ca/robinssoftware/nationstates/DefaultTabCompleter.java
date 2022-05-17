@@ -11,10 +11,10 @@ public class DefaultTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         switch (args.length) {
-        case 0:
+        case 1:
             return List.of("join", "leave", "disband", "create", "claim", "unclaim", "info", "members", "invite",
                     "claims", "help", "uninvite", "promote", "demote");
-        case 1:
+        case 2:
             switch (args[0].toLowerCase()) {
             case "join":
             case "j":

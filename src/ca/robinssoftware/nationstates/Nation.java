@@ -34,7 +34,7 @@ public class Nation extends JSONFile {
         obj.put("citizens", new JSONArray());
         obj.put("residents", new JSONArray());
         obj.put("invites", new JSONArray());
-        obj.put("claims", new JSONArray());
+        obj.put("regions", new JSONArray());
 
         return obj;
     }

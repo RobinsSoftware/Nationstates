@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 
 public enum Permission {
     
-    HELP, CREATE, DISBAND, INFO, JOIN, LEAVE, CLAIM, UNCLAIM, CLAIMS, COMPASS, ADMIN;
+    HELP, CREATE, DISBAND, INFO, JOIN, LEAVE, CLAIM, UNCLAIM, CLAIMS, COMPASS, ADMIN, MEMBERS;
     
     public boolean get(CommandSender sender) {
         return sender.isOp() || sender.hasPermission("nationstates." + name().toLowerCase());

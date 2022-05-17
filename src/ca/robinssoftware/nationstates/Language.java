@@ -48,6 +48,16 @@ public class Language extends JSONFile {
         defaults.put("HELP_ENTRY_PROMOTE", "&dpromote&7:&dp &7> &bPromote a player within a nation.");
         defaults.put("HELP_ENTRY_DEMOTE", "&ddemote&7:&dde &7> &bDemote a player within a nation.");
         
+        defaults.put("INFO_TITLE", "&7>>> &d%s &7<<<");
+        defaults.put("INFO_ENTRY_ID", "&dID &7> &b%s");
+        defaults.put("INFO_ENTRY_CREATED", "&dCreated &7> &b%s");
+        defaults.put("INFO_ENTRY_MEMBERS", "&dMembers &7> &b%s");
+        defaults.put("INFO_ENTRY_LEADER", "&dLeader &7> &b%s");
+        defaults.put("INFO_ENTRY_POLITICS", "&dPolitics &7> &b%s");
+        defaults.put("INFO_ENTRY_SOCIAL", "&dSocial Ranking &7> &b%s");
+        defaults.put("INFO_ENTRY_ECONOMIC", "&dEconomic Ranking &7> &b%s");
+        defaults.put("INFO_ENTRY_AUTHORITARIANISM", "&dAuthoritarianism Ranking &7> &b%s");
+        
         defaults.put("LEAVE_LEADER", "&cYou must disband your nation or set a new leader before leaving it.");
         
         DEFAULTS = defaults;
