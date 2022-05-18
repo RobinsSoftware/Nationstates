@@ -8,11 +8,13 @@ public class NationstatesPlugin extends JavaPlugin {
     
     static NationstatesPlugin PLUGIN = null;
     
-    private final Language language;
+    private Language language;
+    private Config config;
     
     public NationstatesPlugin() {
         PLUGIN = this;
         language = new Language();
+        config = new Config();
     }
     
     public Language getLanguageData() {
@@ -28,6 +30,10 @@ public class NationstatesPlugin extends JavaPlugin {
         getCommand("nationstates").setExecutor(new PluginCommand());
         getCommand("nationstates").setTabCompleter(new PluginTabCompleter());
         getCommand("nationstates").setAliases(List.of("ns"));
+    }
+    
+    public Config getPluginConfig() {
+        return config;
     }
     
 }

@@ -22,6 +22,7 @@ public class Nation extends JSONFile {
     OfflinePlayer leader;
     ArrayList<OfflinePlayer> council, officers, citizens, residents, invites;
     ArrayList<String> regions;
+    int chunks;
 
     static JSONObject getDefaults(String name, OfflinePlayer leader) {
         JSONObject obj = new JSONObject();
@@ -35,24 +36,21 @@ public class Nation extends JSONFile {
         obj.put("residents", new JSONArray());
         obj.put("invites", new JSONArray());
         obj.put("regions", new JSONArray());
+        obj.put("chunks", PLUGIN.getPluginConfig().getNewNationChunks());
 
         return obj;
     }
 
-    private Nation(String name) {
-        super(new File(PLUGIN.getDataFolder() + "/nation/" + name.toLowerCase() + ".json"));
-        load();
-    }
-
     private Nation(String name, boolean create, JSONObject defaults) {
         super(new File(PLUGIN.getDataFolder() + "/nation/" + name.toLowerCase() + ".json"), create, defaults);
+        this.name = name;
         load();
     }
 
     private void load() {
-        if (isNew())
+        if(getOptions().isEmpty())
             return;
-
+        
         name = getString("name");
         displayName = getString("display_name");
         description = getString("description");
@@ -78,6 +76,111 @@ public class Nation extends JSONFile {
         invites = new ArrayList<>();
         for (Object o : getList("invites"))
             invites.add(Bukkit.getOfflinePlayer(UUID.fromString((String) o)));
+        
+        regions = new ArrayList<>();
+        for (Object o : getList("regions"))
+            regions.add((String) o);
+        
+        chunks = getInt("chunks");
+    }
+    
+    void writeRegions() {
+        getOptions().put("regions", regions);
+        
+        try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    void addRegion(String name) {
+        regions.add(name);
+        writeRegions();
+    }
+    
+    void removeRegion(String name) {
+        regions.remove(name);
+        writeRegions();
+    }
+    
+    public boolean containsPlayer(OfflinePlayer player) {
+        return getRank(player) != null;
+    }
+
+    public OfflinePlayer getLeader() {
+        return leader;
+    }
+
+    public ArrayList<OfflinePlayer> getCouncil() {
+        return council;
+    }
+
+    public ArrayList<OfflinePlayer> getOfficers() {
+        return officers;
+    }
+
+    public ArrayList<OfflinePlayer> getCitizens() {
+        return citizens;
+    }
+
+    public ArrayList<OfflinePlayer> getResidents() {
+        return residents;
+    }
+
+    public ArrayList<OfflinePlayer> getInvites() {
+        return invites;
+    }
+
+    public ArrayList<OfflinePlayer> getAllPlayers() {
+        ArrayList<OfflinePlayer> members = new ArrayList<>();
+
+        members.add(leader);
+        members.addAll(council);
+        members.addAll(officers);
+        members.addAll(citizens);
+        members.addAll(residents);
+
+        return members;
+    }
+
+    public NationRank getRank(OfflinePlayer player) {
+        if (leader == player)
+            return NationRank.LEADER;
+        if (council.contains(player))
+            return NationRank.COUNCIL;
+        if (officers.contains(player))
+            return NationRank.OFFICER;
+        if (citizens.contains(player))
+            return NationRank.CITIZEN;
+        if (citizens.contains(player))
+            return NationRank.RESIDENT;
+        return null;
+    }
+
+    public long getTimeCreated() {
+        return created;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        getOptions().put("description", description);
+
+        try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Player> getOnlinePlayers() {
+        List<Player> players = new ArrayList<>();
+
+        for (OfflinePlayer p : getAllPlayers())
+            if (p.isOnline())
+                players.add(p.getPlayer());
+
+        return players;
     }
 
     public String getName() {
@@ -91,6 +194,10 @@ public class Nation extends JSONFile {
             return displayName;
     }
 
+    public int getChunks() {
+        return chunks;
+    }
+    
     public String getDescription() {
         if (description == null)
             return PLUGIN.getLanguageData().get("DEFAULT_DESCRIPTION");
@@ -207,20 +314,20 @@ public class Nation extends JSONFile {
 
     public void kick(OfflinePlayer player) {
         switch (getRank(player)) {
-        case CITIZEN:
-            citizens.remove(player);
-            break;
+        case LEADER:
+            return;
         case COUNCIL:
             council.remove(player);
             break;
         case OFFICER:
             officers.remove(player);
             break;
+        case CITIZEN:
+            citizens.remove(player);
+            break;
         case RESIDENT:
             residents.remove(player);
             break;
-        case LEADER:
-            return;
         default:
             return;
         }
@@ -231,6 +338,15 @@ public class Nation extends JSONFile {
         new OfflinePlayerWrapper(player).setNation(null);
 
         writeMembers();
+    }
+
+    public void disband() {
+        notifyAll(PLUGIN.getLanguageData().getWithPrefix("DISBAND_NOTIFY"));
+        
+        for (OfflinePlayer p : getAllPlayers()) 
+            new OfflinePlayerWrapper(p).setNation(null);
+        
+        getFile().delete();
     }
 
     private void writeMembers() {
@@ -247,93 +363,10 @@ public class Nation extends JSONFile {
             e.printStackTrace();
         }
     }
-
-    public boolean containsPlayer(OfflinePlayer player) {
-        return getRank(player) == null;
-    }
-
-    public OfflinePlayer getLeader() {
-        return leader;
-    }
-
-    public ArrayList<OfflinePlayer> getCouncil() {
-        return council;
-    }
-
-    public ArrayList<OfflinePlayer> getOfficers() {
-        return officers;
-    }
-
-    public ArrayList<OfflinePlayer> getCitizens() {
-        return citizens;
-    }
-
-    public ArrayList<OfflinePlayer> getResidents() {
-        return residents;
-    }
-
-    public ArrayList<OfflinePlayer> getInvites() {
-        return invites;
-    }
-
-    public ArrayList<OfflinePlayer> getAllPlayers() {
-        ArrayList<OfflinePlayer> members = new ArrayList<>();
-
-        members.add(leader);
-        members.addAll(council);
-        members.addAll(officers);
-        members.addAll(citizens);
-        members.addAll(residents);
-
-        return members;
-    }
-
-    public ArrayList<String> stringUUIDs(ArrayList<OfflinePlayer> players) {
-        ArrayList<String> uuids = new ArrayList<>();
-
-        for (OfflinePlayer p : players)
-            uuids.add(p.getUniqueId().toString());
-
-        return uuids;
-    }
-
-    public NationRank getRank(OfflinePlayer player) {
-        if (leader == player)
-            return NationRank.LEADER;
-        if (council.contains(player))
-            return NationRank.COUNCIL;
-        if (officers.contains(player))
-            return NationRank.OFFICER;
-        if (citizens.contains(player))
-            return NationRank.CITIZEN;
-        if (citizens.contains(player))
-            return NationRank.RESIDENT;
-        return null;
-    }
-
-    public long getTimeCreated() {
-        return created;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-        getOptions().put("description", description);
-
-        try {
-            save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Player> getOnlinePlayers() {
-        List<Player> players = new ArrayList<>();
-
-        for (OfflinePlayer p : getAllPlayers())
-            if (p.isOnline())
-                players.add(p.getPlayer());
-
-        return players;
+    
+    public void unclaimAll() {
+        for (String region : regions)
+            chunks += WorldRegion.getAndUseOnce(region).removeAllClaims(this);
     }
 
     public void notifyAll(String message) {
@@ -341,27 +374,38 @@ public class Nation extends JSONFile {
             p.sendMessage(message);
     }
 
-    public static Nation create(String name, OfflinePlayer leader) throws NationExistsException {
-        Nation n = new Nation(name, true, getDefaults(name, leader));
-
-        if (!n.isNew())
-            throw new NationExistsException();
-
-        return n;
-    }
-
-    public static Nation get(String name) {
-        Nation n = new Nation(name, false, null);
-
-        if (n.isNew())
-            return null;
-
-        return n;
-    }
-
     @Override
     public String toString() {
         return name;
+    }
+
+    public static Nation create(String name, OfflinePlayer leader) throws NationExistsException {
+        Nation nation = new Nation(name, true, getDefaults(name, leader));
+
+        if (!nation.isNew())
+            throw new NationExistsException();
+
+        new OfflinePlayerWrapper(leader).setNation(nation);
+
+        return nation;
+    }
+
+    public static Nation get(String name) {
+        Nation nation = new Nation(name, false, null);
+
+        if (nation.isNew())
+            return null;
+
+        return nation;
+    }
+
+    public static ArrayList<String> stringUUIDs(ArrayList<OfflinePlayer> players) {
+        ArrayList<String> uuids = new ArrayList<>();
+
+        for (OfflinePlayer p : players)
+            uuids.add(p.getUniqueId().toString());
+
+        return uuids;
     }
 
     public static class NationExistsException extends Exception {

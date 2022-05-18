@@ -13,7 +13,7 @@ public class OfflinePlayerWrapper extends JSONFile {
     Nation nation;
 
     public OfflinePlayerWrapper(OfflinePlayer player) {
-        super(new File(PLUGIN.getDataFolder() + "/player/" + player.getUniqueId() + ".json"), true, null);
+        super(new File(PLUGIN.getDataFolder() + "/player/" + player.getUniqueId() + ".json"), true);
         this.player = player;
         load();
     }

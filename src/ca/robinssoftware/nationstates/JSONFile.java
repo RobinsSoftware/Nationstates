@@ -60,6 +60,10 @@ public abstract class JSONFile {
         return isNew;
     }
     
+    protected File getFile() {
+        return file;
+    }
+    
     protected void save() throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8);
         writer.write(options.toString(2));
@@ -71,13 +75,13 @@ public abstract class JSONFile {
     }
 
     protected JSONObject getObject(String key) {
-        if (!options.isNull(key))
+        if (!options.has(key))
             return null;
         return options.getJSONObject(key);
     }
     
     protected String getString(String key) {
-        if (!options.isNull(key))
+        if (!options.has(key))
             return null;
         return options.getString(key);
     }
@@ -87,13 +91,13 @@ public abstract class JSONFile {
     }
     
     protected int getInt(String key) {
-        if (!options.isNull(key))
+        if (!options.has(key))
             return 0;
         return options.getInt(key);
     }
     
     protected long getLong(String key) {
-        if (!options.isNull(key))
+        if (!options.has(key))
             return 0;
         return options.getLong(key);
     }
