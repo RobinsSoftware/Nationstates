@@ -50,6 +50,11 @@ public class DefaultCommand implements CommandExecutor {
             create(sender, args);
             return true;
         case "unclaim":
+            unclaim(sender, args);
+            return true;
+        case "unclaimall":
+            unclaimall(sender, args);
+            return true;
         case "claim":
             claim(sender, args);
             return true;
@@ -66,10 +71,10 @@ public class DefaultCommand implements CommandExecutor {
             return true;
         default:
             try {
-                new PagedChatMessage(PLUGIN.getLanguageData().get("HELP_TITLE"), helpList(sender)).sendTo(sender,
+                new PagedChatMessage(PLUGIN.getLanguageData().getField("HELP_TITLE"), helpList(sender)).sendTo(sender,
                         Integer.parseInt(args[0]) - 1);
             } catch (NumberFormatException e) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_COMMAND_NOT_FOUND", args[0]));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_COMMAND_NOT_FOUND", args[0]));
             }
         }
 
@@ -90,8 +95,8 @@ public class DefaultCommand implements CommandExecutor {
     }
 
     void help(CommandSender sender, String... args) {
-        if (!Permission.HELP.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.HELP.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
@@ -100,54 +105,54 @@ public class DefaultCommand implements CommandExecutor {
             page = Integer.parseInt(args[1]) - 1;
         }
 
-        new PagedChatMessage(PLUGIN.getLanguageData().get("HELP_TITLE"), helpList(sender)).sendTo(sender, page);
+        new PagedChatMessage(PLUGIN.getLanguageData().getField("HELP_TITLE"), helpList(sender)).sendTo(sender, page);
     }
 
     List<String> helpList(CommandSender sender) {
         List<String> help = new ArrayList<>();
 
-        if (Permission.CLAIM.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_CLAIM"));
-        if (Permission.CONFIRM.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_CONFIRM"));
-        if (Permission.CREATE.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_CREATE"));
-        if (Permission.DEMOTE.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_DEMOTE"));
-        if (Permission.DISBAND.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_DISBAND"));
-        if (Permission.HELP.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_HELP"));
-        if (Permission.INFO.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_INFO"));
-        if (Permission.JOIN.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_JOIN"));
-        if (Permission.LEAVE.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_LEAVE"));
-        if (Permission.MEMBERS.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_MEMBERS"));
-        if (Permission.NAME.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_NAME"));
-        if (Permission.PROMOTE.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_PROMOTE"));
-        if (Permission.UNCLAIM.get(sender))
-            help.add(PLUGIN.getLanguageData().get("HELP_ENTRY_UNCLAIM"));
+        if (Permission.CLAIM.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_CLAIM"));
+        if (Permission.CONFIRM.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_CONFIRM"));
+        if (Permission.CREATE.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_CREATE"));
+        if (Permission.DEMOTE.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_DEMOTE"));
+        if (Permission.DISBAND.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_DISBAND"));
+        if (Permission.HELP.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_HELP"));
+        if (Permission.INFO.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_INFO"));
+        if (Permission.JOIN.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_JOIN"));
+        if (Permission.LEAVE.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_LEAVE"));
+        if (Permission.MEMBERS.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_MEMBERS"));
+        if (Permission.NAME.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_NAME"));
+        if (Permission.PROMOTE.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_PROMOTE"));
+        if (Permission.UNCLAIM.check(sender))
+            help.add(PLUGIN.getLanguageData().getField("HELP_ENTRY_UNCLAIM"));
 
         return help;
     }
 
     void join(CommandSender sender, String... args) {
-        if (!Permission.JOIN.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.JOIN.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
         if (args.length == 1) {
             sender.sendMessage(
-                    PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation join <nation> [player]"));
+                    PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation join <nation> [player]"));
         } else if (args.length == 2) {
             if (!(sender instanceof OfflinePlayer)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER", args));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER", args));
                 return;
             }
 
@@ -159,47 +164,47 @@ public class DefaultCommand implements CommandExecutor {
 
                     if (current != null) {
                         sender.sendMessage(
-                                PLUGIN.getLanguageData().getWithPrefix("DEFAULT_ALREADY_IN_NATION", current.getName()));
+                                PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_ALREADY_IN_NATION", current.getName()));
                     } else {
                         target.uninvite(player);
                         target.join(player);
                     }
                 } else {
-                    sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("JOIN_NOT_INVITED", target.getName()));
+                    sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("JOIN_NOT_INVITED", target.getName()));
                 }
             } else {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1]));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1]));
             }
         } else if (args.length == 3) {
-            if (!Permission.ADMIN.get(sender))
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+            if (!Permission.ADMIN.check(sender))
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
             else {
                 if (Nation.get(args[1].toLowerCase()) != null) {
                     if (Bukkit.getPlayer(args[2]) != null) {
                         Nation.get(args[1].toLowerCase()).uninvite(Bukkit.getPlayer(args[2]));
                         Nation.get(args[1].toLowerCase()).join(Bukkit.getPlayer(args[2]));
                     } else {
-                        sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_PLAYER_OFFLINE", args[2]));
+                        sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_PLAYER_OFFLINE", args[2]));
                     }
                 } else {
                     sender.sendMessage(
-                            PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1]));
+                            PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1]));
                 }
             }
         } else
             sender.sendMessage(
-                    PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation join <nation> [player]"));
+                    PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation join <nation> [player]"));
     }
 
     void leave(CommandSender sender, String... args) {
-        if (!Permission.LEAVE.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.LEAVE.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
         if (args.length == 1) {
             if (!(sender instanceof OfflinePlayer)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER", args));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER", args));
                 return;
             }
 
@@ -208,25 +213,25 @@ public class DefaultCommand implements CommandExecutor {
 
             if (current != null) {
                 if (current.getLeader() == player) {
-                    sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("LEAVE_LEADER"));
+                    sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("LEAVE_LEADER"));
                     current.kick(player);
                 }
             } else {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
             }
         } else
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation leave"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation leave"));
     }
 
     void info(CommandSender sender, String... args) {
-        if (!Permission.INFO.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.INFO.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
         if (args.length > 3) {
             sender.sendMessage(
-                    PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation info [nation:page] [page]"));
+                    PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation info [nation:page] [page]"));
             return;
         }
 
@@ -235,7 +240,7 @@ public class DefaultCommand implements CommandExecutor {
             if (sender instanceof Player)
                 nation = new OfflinePlayerWrapper((Player) sender).getNation();
             else {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
                 return;
             }
         else
@@ -243,95 +248,100 @@ public class DefaultCommand implements CommandExecutor {
 
         if (nation == null) {
             if (args.length == 1)
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
             else
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1].toLowerCase()));
+                sender.sendMessage(
+                        PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1].toLowerCase()));
             return;
         }
 
-        sender.sendMessage(PLUGIN.getLanguageData().get("INFO_TITLE"),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_ID", nation.getName()),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_CREATED",
-                        new SimpleDateFormat(PLUGIN.getLanguageData().get("TIME_FORMAT"))
+        sender.sendMessage(PLUGIN.getLanguageData().getField("INFO_TITLE", nation.getDisplayName()),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_ID", nation.getName()),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_CREATED",
+                        new SimpleDateFormat(PLUGIN.getLanguageData().getField("TIME_FORMAT"))
                                 .format(new Date(nation.getTimeCreated()))),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_MEMBERS", "" + nation.getAllPlayers().size()),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_LEADER", nation.getLeader().getName()),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_POLITICS"), PLUGIN.getLanguageData().get("INFO_ENTRY_SOCIAL"),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_ECONOMIC"),
-                PLUGIN.getLanguageData().get("INFO_ENTRY_AUTHORITARIANISM"));
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_MEMBERS", "" + nation.getAllPlayers().size()),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_CHUNKS", "" + nation.getChunks() + ""),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_LEADER", nation.getLeader().getName()),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_POLITICS"), PLUGIN.getLanguageData().getField("INFO_ENTRY_SOCIAL"),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_ECONOMIC"),
+                PLUGIN.getLanguageData().getField("INFO_ENTRY_AUTHORITARIANISM"));
     }
 
     void members(CommandSender sender, String... args) {
-        if (!Permission.MEMBERS.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.MEMBERS.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
     }
 
     void create(CommandSender sender, String... args) {
-        if (!Permission.CREATE.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.CREATE.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
         if (args.length == 1) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation create <name>"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation create <name>"));
         } else if (args.length == 2) {
             if (new OfflinePlayerWrapper((Player) sender).getNation() == null) {
                 if (Pattern.compile("^[a-zA-Z]*$").matcher(args[1]).matches()) {
                     try {
                         Nation.create(args[1].toLowerCase(), (Player) sender);
-                        sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CREATE_SUCCESS"));
+                        sender.sendMessage(
+                                PLUGIN.getLanguageData().getFieldWithPrefix("CREATE_SUCCESS", args[1].toLowerCase()));
                     } catch (NationExistsException e) {
                         sender.sendMessage(
-                                PLUGIN.getLanguageData().getWithPrefix("CREATE_EXISTS", args[1].toLowerCase()));
+                                PLUGIN.getLanguageData().getFieldWithPrefix("CREATE_EXISTS", args[1].toLowerCase()));
                     }
                 } else {
-                    sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CREATE_ALPHABETICAL"));
+                    sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CREATE_ALPHABETICAL"));
                 }
             } else {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_ALREADY_IN_NATION",
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_ALREADY_IN_NATION",
                         new OfflinePlayerWrapper((Player) sender).getNation().getName()));
             }
         } else {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation create <name>"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation create <name>"));
         }
     }
 
     void disband(CommandSender sender, String... args) {
-        if (!Permission.MEMBERS.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.MEMBERS.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
 
         if (args.length > 2) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_USAGE", "nation disband [nation]"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation disband [nation]"));
             return;
         }
 
         if (args.length == 1 & !(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
             return;
-        } else if (args.length == 2 & !(Permission.ADMIN.get(sender))) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+        } else if (args.length == 2 & !(Permission.ADMIN.check(sender))) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
             return;
         }
 
-        Nation nation = args.length == 1 ? new OfflinePlayerWrapper((Player) sender).getNation() : Nation.get(args[1].toLowerCase());
+        Nation nation = args.length == 1 ? new OfflinePlayerWrapper((Player) sender).getNation()
+                : Nation.get(args[1].toLowerCase());
         if (nation == null) {
             if (args.length == 1)
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
             else
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1].toLowerCase()));
-            return;
-        }
-        
-        if (!Permission.ADMIN.get(sender) && !nation.getRank((Player) sender).inherits(NationRank.LEADER)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_RANK"), "leader");
+                sender.sendMessage(
+                        PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NATION_DOES_NOT_EXIST", args[1].toLowerCase()));
             return;
         }
 
-        sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DISBAND_CONFIRM", nation.getName()));
+        if (!Permission.ADMIN.check(sender) && !nation.getRank((Player) sender).inherits(NationRank.LEADER)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_RANK"), "leader");
+            return;
+        }
+
+        sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DISBAND_CONFIRM", nation.getName()));
         addConfirmation(sender.getName(), new Runnable() {
 
             @Override
@@ -343,114 +353,158 @@ public class DefaultCommand implements CommandExecutor {
     }
 
     void claim(CommandSender sender, String... args) {
-        if (!Permission.CLAIM.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.CLAIM.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
-        
+
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
             return;
         }
-        
+
         Nation nation = null;
-        
+
         if (args.length == 2) {
-            if (!Permission.ADMIN.get(sender)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+            if (!Permission.ADMIN.check(sender)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
                 return;
             }
-            
+
             nation = Nation.get(args[1].toLowerCase());
-            
+
             if (nation == null) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
                 return;
             }
-        
+
         } else {
             nation = new OfflinePlayerWrapper((Player) sender).getNation();
-            
+
             if (nation == null) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
                 return;
             }
-            
-            if (!Permission.ADMIN.get(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
+
+            if (!Permission.ADMIN.check(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
                 return;
             }
         }
-        
-        if(nation.getChunks() == 0) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CLAIM_NOT_ENOUGH_CHUNKS"));
+
+        if (nation.getChunks() == 0) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CLAIM_NOT_ENOUGH_CHUNKS"));
             return;
         }
-        
+
         Location location = ((Player) sender).getLocation();
         WorldRegion region = WorldRegion.getAndUseOnce(location);
-        
-        if (region.getOwner(location) != null && region.getOwner(location) != nation) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CLAIM_ALREADY_OWNED", region.getOwner(location).getName()));
+
+        if (region.getOwner(location) != null) {
+            sender.sendMessage(
+                    PLUGIN.getLanguageData().getFieldWithPrefix("CLAIM_ALREADY_OWNED", region.getOwner(location).getName()));
             return;
         }
-        
-        nation.chunks--;
+
         region.setOwner(location, nation);
-        sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CLAIM_SUCCESS", "1", nation.getName()));
+        sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CLAIM_SUCCESS", "1", nation.getName()));
     }
 
     void unclaim(CommandSender sender, String... args) {
-        if (!Permission.CLAIM.get(sender)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NO_PERMISSION"));
+        if (!Permission.CLAIM.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
             return;
         }
-        
+
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_CONSOLE_SENDER"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
             return;
         }
-        
+
         Nation nation = null;
-        
+
         if (args.length == 2) {
-            if (!Permission.ADMIN.get(sender)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+            if (!Permission.ADMIN.check(sender)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
                 return;
             }
-            
+
             nation = Nation.get(args[1].toLowerCase());
-            
+
             if (nation == null) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
                 return;
             }
-        
+
         } else {
             nation = new OfflinePlayerWrapper((Player) sender).getNation();
-            
+
             if (nation == null) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_NOT_IN_NATION"));
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
                 return;
             }
-            
-            if (!Permission.ADMIN.get(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
-                sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
+
+            if (!Permission.ADMIN.check(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
                 return;
             }
         }
-        
+
         Location location = ((Player) sender).getLocation();
         WorldRegion region = WorldRegion.getAndUseOnce(location);
-        
-        if (region.getOwner(location) != null && region.getOwner(location) != nation) {
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CLAIM_ALREADY_OWNED", region.getOwner(location).getName()));
+
+        if (region.getOwner(location) != nation
+                && (region.getOwner(location) == null || !Permission.ADMIN.check(sender))) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("UNCLAIM_CANT_UNCLAIM"));
             return;
         }
-        
-        nation.chunks++;
+
         region.removeOwner(location);
-        sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("UNCLAIM_SUCCESS", "1", nation.getName()));
+        sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("UNCLAIM_SUCCESS", "1", nation.getName()));
+    }
+
+    void unclaimall(CommandSender sender, String... args) {
+        if (!Permission.CLAIM.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
+            return;
+        }
+
+        Nation nation = null;
+
+        if (args.length == 2) {
+            if (!Permission.ADMIN.check(sender)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+                return;
+            }
+
+            nation = Nation.get(args[1].toLowerCase());
+
+            if (nation == null) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_ADMIN"));
+                return;
+            }
+
+        } else {
+            nation = new OfflinePlayerWrapper((Player) sender).getNation();
+
+            if (nation == null) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
+                return;
+            }
+
+            if (!Permission.ADMIN.check(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
+                sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
+                return;
+            }
+        }
+
+        nation.unclaimAll();
+        sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("UNCLAIM_SUCCESS", "all", nation.getName()));
     }
 
     void invite() {
@@ -459,7 +513,7 @@ public class DefaultCommand implements CommandExecutor {
 
     void confirm(CommandSender sender, String... args) {
         if (confirmations.get(sender.getName()) == null)
-            sender.sendMessage(PLUGIN.getLanguageData().getWithPrefix("CONFIRM_NONE"));
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CONFIRM_NONE"));
         else {
             confirmations.get(sender.getName()).run();
             confirmations.remove(sender.getName());

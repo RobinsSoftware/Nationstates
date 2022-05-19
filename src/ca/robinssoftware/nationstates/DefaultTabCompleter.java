@@ -15,31 +15,31 @@ public class DefaultTabCompleter implements TabCompleter {
         case 1:
             List<String> help = new ArrayList<>();
 
-            if (Permission.CLAIM.get(sender))
+            if (Permission.CLAIM.check(sender))
                 help.add("claim");
-            if (Permission.CONFIRM.get(sender))
+            if (Permission.CONFIRM.check(sender))
                 help.add("confirm");
-            if (Permission.CREATE.get(sender))
+            if (Permission.CREATE.check(sender))
                 help.add("create");
-            if (Permission.DEMOTE.get(sender))
+            if (Permission.DEMOTE.check(sender))
                 help.add("demote");
-            if (Permission.DISBAND.get(sender))
+            if (Permission.DISBAND.check(sender))
                 help.add("disband");
-            if (Permission.HELP.get(sender))
+            if (Permission.HELP.check(sender))
                 help.add("help");
-            if (Permission.INFO.get(sender))
+            if (Permission.INFO.check(sender))
                 help.add("info");
-            if (Permission.JOIN.get(sender))
+            if (Permission.JOIN.check(sender))
                 help.add("join");
-            if (Permission.LEAVE.get(sender))
+            if (Permission.LEAVE.check(sender))
                 help.add("leave");
-            if (Permission.MEMBERS.get(sender))
+            if (Permission.MEMBERS.check(sender))
                 help.add("members");
-            if (Permission.NAME.get(sender))
+            if (Permission.NAME.check(sender))
                 help.add("name");
-            if (Permission.PROMOTE.get(sender))
+            if (Permission.PROMOTE.check(sender))
                 help.add("promote");
-            if (Permission.UNCLAIM.get(sender))
+            if (Permission.UNCLAIM.check(sender))
                 help.add("unclaim");
 
             return help;
@@ -57,7 +57,7 @@ public class DefaultTabCompleter implements TabCompleter {
             case "disband":
             case "d":
                 // only return nations if admin, else none
-                if (Permission.ADMIN.get(sender))
+                if (Permission.ADMIN.check(sender))
                     return null;
                 else
                     return List.of();

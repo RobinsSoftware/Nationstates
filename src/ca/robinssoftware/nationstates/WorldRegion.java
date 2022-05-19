@@ -13,13 +13,13 @@ import org.json.JSONObject;
 
 public class WorldRegion extends JSONFile {
 
-    final static HashMap<String, WorldRegion> loaded = new HashMap<>();
+    static final HashMap<String, WorldRegion> loaded = new HashMap<>();
     
     final String name;
     final int x, z;
 
     WorldRegion(Location location, boolean cache) {
-        super(new File(PLUGIN.getDataFolder() + "/region/" + stringify(location)), true);
+        super(new File(PLUGIN.getDataFolder() + "/region/" + stringify(location) + ".json"), true);
         this.name = stringify(location);
 
         x = (int) Math.floor(location.getChunk().getX() / 32);
@@ -41,8 +41,8 @@ public class WorldRegion extends JSONFile {
     }
 
     static String stringify(Location location) {
-        return location.getWorld().getName() + "/" + Math.floor(location.getChunk().getX() / 32) + "."
-                + Math.floor(location.getChunk().getZ()) / 32;
+        return location.getWorld().getName() + "/" + (int) Math.floor(location.getChunk().getX() / 32) + "_"
+                + (int) Math.floor(location.getChunk().getZ() / 32);
     }
     
     public static WorldRegion getAndUseOnce(Location location) {
@@ -52,8 +52,8 @@ public class WorldRegion extends JSONFile {
     public static WorldRegion getAndUseOnce(String location) {
         String[] split = location.split("/");
 
-        return get(new Location(Bukkit.getWorld(split[0]), (double) Integer.parseInt(split[1].split(".")[0]) * 16, 0,
-                (double) Integer.parseInt(split[1].split(".")[1]) * 16));
+        return get(new Location(Bukkit.getWorld(split[0]), (double) Integer.parseInt(split[1].split("_")[0]) * 16, 0,
+                (double) Integer.parseInt(split[1].split("_")[1]) * 16));
     }
 
     public static WorldRegion get(Location location) {
@@ -65,30 +65,30 @@ public class WorldRegion extends JSONFile {
     public Nation getOwner(Location location) {
         Chunk chunk = location.getChunk();
 
-        if (getObject(chunk.getX() + "") == null)
+        if (getJSONObject(chunk.getX() + "") == null)
             return null;
 
-        if (!getObject(chunk.getX() + "").has(chunk.getZ() + ""))
+        if (!getJSONObject(chunk.getX() + "").has(chunk.getZ() + ""))
             return null;
 
-        if (Nation.get(getObject(chunk.getX() + "").getString(chunk.getZ() + "")) == null) {
-            getObject(chunk.getX() + "").remove(chunk.getZ() + "");
+        if (Nation.get(getJSONObject(chunk.getX() + "").getString(chunk.getZ() + "")) == null) {
+            getJSONObject(chunk.getX() + "").remove(chunk.getZ() + "");
             return null;
         }
 
-        return Nation.get(getObject(chunk.getX() + "").getString(chunk.getZ() + ""));
+        return Nation.get(getJSONObject(chunk.getX() + "").getString(chunk.getZ() + ""));
     }
 
     public void removeOwner(Location location) {
         Chunk chunk = location.getChunk();
 
-        if (getOwner(location) != null && getClaims(getOwner(location)) == 0)
+        if (getOwner(location) != null && getClaims(getOwner(location)) == 0) {
             getOwner(location).removeRegion(stringify(location));
+            getOwner(location).addChunks(1);
+        }
 
-        if (getObject(chunk.getX() + "") == null)
-            getOptions().put(chunk.getX() + "", new JSONObject()).remove(chunk.getZ() + "");
-        else
-            getObject(chunk.getX() + "").remove(chunk.getZ() + "");
+        if (getJSONObject(chunk.getX() + "") != null)
+            getJSONObject(chunk.getX() + "").remove(chunk.getZ() + "");
 
         try {
             save();
@@ -105,16 +105,20 @@ public class WorldRegion extends JSONFile {
 
         Chunk chunk = location.getChunk();
 
-        if (getOwner(location) != null && getClaims(getOwner(location)) == 0)
+        if (getOwner(location) != null) {
             getOwner(location).removeRegion(stringify(location));
+            getOwner(location).addChunks(1);
+        }
 
         nation.addRegion(stringify(location));
 
-        if (getObject(chunk.getX() + "") == null)
-            getOptions().put(chunk.getX() + "", new JSONObject()).put(chunk.getZ() + "", nation.getName());
+        if (getJSONObject(chunk.getX() + "") == null)
+            getOptions().put(chunk.getX() + "", new JSONObject().put(chunk.getZ() + "", nation.getName()));
         else
-            getObject(chunk.getX() + "").put(chunk.getZ() + "", nation.getName());
+            getJSONObject(chunk.getX() + "").put(chunk.getZ() + "", nation.getName());
 
+        nation.removeChunks(1);
+        
         try {
             save();
         } catch (IOException e) {
@@ -127,11 +131,11 @@ public class WorldRegion extends JSONFile {
         int incrementX = x * 32;
 
         for (int i = 0; i < 16; i++) {
-            if (getObject((incrementX + i) + "") == null)
+            if (getJSONObject((incrementX + i) + "") == null)
                 break;
 
-            for (String key : getObject((incrementX + i) + "").keySet())
-                if (getObject((x + i) + "").getString(key) == nation.getName())
+            for (String key : getJSONObject((incrementX + i) + "").keySet())
+                if (getJSONObject((x + i) + "").getString(key) == nation.getName())
                     found++;
         }
 
@@ -140,20 +144,26 @@ public class WorldRegion extends JSONFile {
 
     public int removeAllClaims(Nation nation) {
         int found = 0;
-        int incrementX = x * 32;
+        int minChunkX = x * 32;
 
         for (int i = 0; i < 16; i++) {
-            if (getObject((incrementX + i) + "") == null)
-                break;
+            if (getJSONObject((minChunkX + i) + "") == null)
+                continue;
 
-            for (String key : getObject((incrementX + i) + "").keySet())
-                if (getObject((x + i) + "").getString(key) == nation.getName()) {
+            for (String key : getJSONObject((minChunkX + i) + "").keySet())
+                if (getJSONObject((minChunkX + i) + "").getString(key) == nation.getName()) {
                     found++;
-                    getObject((x + i) + "").remove(key);
+                    getJSONObject((minChunkX + i) + "").remove(key);
                 }
         }
         
         nation.removeRegion(name);
+        
+        try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return found;
     }

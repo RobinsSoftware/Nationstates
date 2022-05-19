@@ -10,12 +10,7 @@ public class NationstatesPlugin extends JavaPlugin {
     
     private Language language;
     private Config config;
-    
-    public NationstatesPlugin() {
-        PLUGIN = this;
-        language = new Language();
-        config = new Config();
-    }
+    private AntiGrief antiGrief;
     
     public Language getLanguageData() {
         return language;
@@ -23,6 +18,11 @@ public class NationstatesPlugin extends JavaPlugin {
     
     @Override
     public void onEnable() {
+        PLUGIN = this;
+        language = new Language();
+        config = new Config();
+        antiGrief = new AntiGrief();
+        
         getCommand("nation").setExecutor(new DefaultCommand());
         getCommand("nation").setTabCompleter(new DefaultTabCompleter());
         getCommand("nation").setAliases(List.of("n"));
@@ -30,10 +30,21 @@ public class NationstatesPlugin extends JavaPlugin {
         getCommand("nationstates").setExecutor(new PluginCommand());
         getCommand("nationstates").setTabCompleter(new PluginTabCompleter());
         getCommand("nationstates").setAliases(List.of("ns"));
+        
+        getServer().getPluginManager().registerEvents(antiGrief, PLUGIN);
+    }
+    
+    @Override
+    public void onDisable() {
+        PLUGIN = null;
     }
     
     public Config getPluginConfig() {
         return config;
+    }
+    
+    public AntiGrief getAntiGrief() {
+        return antiGrief;
     }
     
 }

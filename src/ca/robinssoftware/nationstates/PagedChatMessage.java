@@ -11,7 +11,7 @@ public class PagedChatMessage {
     private List<String> entries;
     private String title;
     
-    private String footer = PLUGIN.getLanguageData().get("DEFAULT_FOOTER");
+    private String footer = PLUGIN.getLanguageData().getField("DEFAULT_FOOTER");
     private int entriesPerPage = 8;
 
     public PagedChatMessage(String title, List<String> entries) {

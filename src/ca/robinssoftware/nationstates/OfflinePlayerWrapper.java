@@ -17,6 +17,7 @@ public class OfflinePlayerWrapper extends JSONFile {
         this.player = player;
         load();
     }
+    
 
     private void load() {
         if (getOptions().has("nation"))
