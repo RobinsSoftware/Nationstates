@@ -5,7 +5,6 @@ import static ca.robinssoftware.nationstates.NationstatesPlugin.PLUGIN;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +17,6 @@ import org.json.JSONObject;
 
 public class Nation extends JSONFile {
 
-    final static HashMap<String, Nation> loaded = new HashMap<>();
-    
     static JSONObject getDefaults(String name, OfflinePlayer leader) {
         JSONObject obj = new JSONObject();
 

@@ -9,8 +9,8 @@ import org.bukkit.OfflinePlayer;
 
 public class OfflinePlayerWrapper extends JSONFile {
 
-    final OfflinePlayer player;
-    Nation nation;
+    private final OfflinePlayer player;
+    private Nation nation;
 
     public OfflinePlayerWrapper(OfflinePlayer player) {
         super(new File(PLUGIN.getDataFolder() + "/player/" + player.getUniqueId() + ".json"), true);

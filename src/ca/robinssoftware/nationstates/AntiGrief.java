@@ -44,21 +44,25 @@ public class AntiGrief implements Listener {
 
     @EventHandler
     public void interactEvent(PlayerInteractEvent e) {
+        if (e.getClickedBlock() == null)
+            return;
+        
         AntiGriefValidation saved = loaded.get(e.getPlayer().getUniqueId());
         Location location = e.getClickedBlock().getLocation();
 
         if (saved != null && saved.x == location.getChunk().getX() && saved.z == location.getChunk().getZ()) {
             if (!saved.allowed) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage(PLUGIN.getLanguageData().getField("CLAIM_OWNED", saved.owner));
+                e.getPlayer().sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CLAIM_OWNED", saved.owner));
             }
 
             return;
         }
 
         Nation owner = WorldRegion.get(location).getOwner(location);
+        String displayName = owner == null ? null : owner.getDisplayName();
         AntiGriefValidation validation = new AntiGriefValidation(location.getChunk().getX(), location.getChunk().getZ(),
-                owner.getDisplayName());
+                displayName);
 
         if (owner != null && owner != new OfflinePlayerWrapper(e.getPlayer()).getNation()
                 && !admins.contains(e.getPlayer().getUniqueId()))
@@ -70,7 +74,7 @@ public class AntiGrief implements Listener {
 
         if (!validation.allowed) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage(PLUGIN.getLanguageData().getField("CLAIM_OWNED", validation.owner));
+            e.getPlayer().sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CLAIM_OWNED", validation.owner));
         }
     }
 

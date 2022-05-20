@@ -78,7 +78,7 @@ public class Language extends JSONFile {
         defaults.put("CLAIM_SUCCESS", "&bClaimed %s chunk(s) for %s.");
         defaults.put("CLAIM_ALREADY_OWNED", "&bChunk is already owned by %s.");
         defaults.put("CLAIM_NOT_ENOUGH_CHUNKS", "&cSpecified nation does not have enough chunks to claim land.");
-        defaults.put("CLAIM_OWNED", "&cYou cannot interact with the land of %s.");
+        defaults.put("CLAIM_OWNED", "&cYou cannot interact with land owned by %s.");
         
         defaults.put("UNCLAIM_SUCCESS", "&bUnclaimed %s chunk(s) for %s.");
         defaults.put("UNCLAIM_CANT_UNCLAIM", "&bYou cannot unclaim this chunk.");

@@ -1,6 +1,7 @@
 package ca.robinssoftware.nationstates;
 
 import static ca.robinssoftware.nationstates.NationstatesPlugin.PLUGIN;
+import static ca.robinssoftware.nationstates.LocationUtils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,17 +14,16 @@ import org.json.JSONObject;
 
 public class WorldRegion extends JSONFile {
 
-    static final HashMap<String, WorldRegion> loaded = new HashMap<>();
+    private static final HashMap<String, WorldRegion> loaded = new HashMap<>();
     
-    final String name;
-    final int x, z;
+    private final String name;
+    private final int x;
 
     WorldRegion(Location location, boolean cache) {
         super(new File(PLUGIN.getDataFolder() + "/region/" + stringify(location) + ".json"), true);
         this.name = stringify(location);
 
         x = (int) Math.floor(location.getChunk().getX() / 32);
-        z = (int) Math.floor(location.getChunk().getZ() / 32);
 
         if (!cache)
             return;
@@ -39,11 +39,6 @@ public class WorldRegion extends JSONFile {
 
         }, 300 * 20);
     }
-
-    static String stringify(Location location) {
-        return location.getWorld().getName() + "/" + (int) Math.floor(location.getChunk().getX() / 32) + "_"
-                + (int) Math.floor(location.getChunk().getZ() / 32);
-    }
     
     public static WorldRegion getAndUseOnce(Location location) {
         return new WorldRegion(location, false);
@@ -52,8 +47,8 @@ public class WorldRegion extends JSONFile {
     public static WorldRegion getAndUseOnce(String location) {
         String[] split = location.split("/");
 
-        return get(new Location(Bukkit.getWorld(split[0]), (double) Integer.parseInt(split[1].split("_")[0]) * 16, 0,
-                (double) Integer.parseInt(split[1].split("_")[1]) * 16));
+        return get(new Location(Bukkit.getWorld(split[0]), (double) (Integer.parseInt(split[1].split("_")[0]) << 4), 0,
+                (double) (Integer.parseInt(split[1].split("_")[1]) << 4)));
     }
 
     public static WorldRegion get(Location location) {
@@ -128,7 +123,7 @@ public class WorldRegion extends JSONFile {
 
     public int getClaims(Nation nation) {
         int found = 0;
-        int incrementX = x * 32;
+        int incrementX = x << 5;
 
         for (int i = 0; i < 16; i++) {
             if (getJSONObject((incrementX + i) + "") == null)
@@ -144,7 +139,7 @@ public class WorldRegion extends JSONFile {
 
     public int removeAllClaims(Nation nation) {
         int found = 0;
-        int minChunkX = x * 32;
+        int minChunkX = x << 5;
 
         for (int i = 0; i < 16; i++) {
             if (getJSONObject((minChunkX + i) + "") == null)

@@ -62,6 +62,8 @@ public class DefaultCommand implements CommandExecutor {
             disband(sender, args);
             return true;
         case "invite":
+            invite(sender, args);
+            return true;
         case "uninvite":
         case "promote":
         case "demote":
@@ -507,11 +509,48 @@ public class DefaultCommand implements CommandExecutor {
         sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("UNCLAIM_SUCCESS", "all", nation.getName()));
     }
 
-    void invite() {
-
+    void invite(CommandSender sender, String... args) {
+        if (!Permission.INVITE.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+        
+        if (args.length != 2) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_USAGE", "nation invite <player>"));
+            return;
+        }
+        
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_CONSOLE_SENDER"));
+            return;
+        }
+        
+        Nation nation = new OfflinePlayerWrapper((Player) sender).getNation();
+        
+        if (nation == null) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NOT_IN_NATION"));
+            return;
+        }
+        
+        if (!Permission.ADMIN.check(sender) && !nation.getRank((Player) sender).inherits(NationRank.OFFICER)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_REQUIRE_RANK"), "officer");
+            return;
+        }
+        
+        Player player = Bukkit.getPlayer(args[1]);
+        
+        if (player == null) {
+            
+            return;
+        }
     }
 
     void confirm(CommandSender sender, String... args) {
+        if (!Permission.CLAIM.check(sender)) {
+            sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("DEFAULT_NO_PERMISSION"));
+            return;
+        }
+        
         if (confirmations.get(sender.getName()) == null)
             sender.sendMessage(PLUGIN.getLanguageData().getFieldWithPrefix("CONFIRM_NONE"));
         else {
